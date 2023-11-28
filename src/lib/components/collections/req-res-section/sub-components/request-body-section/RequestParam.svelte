@@ -76,167 +76,298 @@
     isHorizontalVerticalUnsubscribe();
     tabSubscribe();
   });
+
+  function move(element) {
+    return {
+      destroy() {},
+    };
+  }
+
+  function resize(element) {
+    const right: any = document.createElement("div");
+    right.direction = "east";
+    right.classList.add("grabber");
+    right.classList.add("right");
+
+    const left: any = document.createElement("div");
+    left.direction = "west";
+    left.classList.add("grabber");
+    left.classList.add("left");
+
+    const grabbers = [right, left];
+
+    let active = null,
+      initialRect = null,
+      initialPos = null;
+
+    grabbers.forEach((grabber) => {
+      element.appendChild(grabber);
+      grabber.addEventListener("mousedown", onMousedown);
+    });
+
+    function onMousedown(event) {
+      active = event.target;
+      const rect = element.getBoundingClientRect();
+      const parent = element.parentElement.getBoundingClientRect();
+
+      initialRect = {
+        width: rect.width,
+        height: rect.height,
+        left: rect.left - parent.left,
+        right: parent.right - rect.right,
+      };
+      initialPos = { x: event.pageX, y: event.pageY };
+      active.classList.add("selected");
+    }
+
+    function onMouseup(event) {
+      if (!active) return;
+
+      active.classList.remove("selected");
+      active = null;
+      initialRect = null;
+      initialPos = null;
+    }
+
+    function onMove(event) {
+      if (!active) return;
+
+      const direction = active.direction;
+      let delta;
+
+      if (direction.match("east")) {
+        delta = event.pageX - initialPos.x;
+        console.log(delta, "east");
+        element.style.width = `${initialRect.width + delta}px`;
+      }
+
+      if (direction.match("west")) {
+        delta = event.pageX + initialPos.x;
+        console.log(delta, "west");
+        console.log(initialRect.width + delta);
+        element.style.width = `${initialRect.width + delta}px`;
+      }
+    }
+
+    window.addEventListener("mousemove", onMove);
+    window.addEventListener("mouseup", onMouseup);
+
+    return {
+      destroy() {
+        window.removeEventListener("mousemove", onMove);
+        window.removeEventListener("mousemove", onMousedown);
+
+        grabbers.forEach((grabber) => {
+          element.removeChild(grabber);
+        });
+      },
+    };
+  }
 </script>
 
-<div
-  class="d-flex align-items-start {isHorizontalVerticalMode
-    ? 'flex-column'
-    : 'flex-row'} justify-content-between w-100"
->
+<div class="box" use:move use:resize>
   <div
-    class="right-panel d-flex flex-column align-items-top justify-content-center pt-3 ps-4 pe-2"
-    style="width:{isHorizontalVerticalMode ? '100%' : '50%'}; "
+    class="d-flex align-items-start {isHorizontalVerticalMode
+      ? 'flex-column'
+      : 'flex-row'} justify-content-between w-100"
   >
     <div
-      class="{isCollaps
-        ? 'ps-2 pt-2 pe-5'
-        : 'pt-1 ps-1 pe-5'} d-flex align-items-start text-requestBodyColor"
+      class="right-panel d-flex flex-column align-items-top justify-content-center pt-3 ps-4 pe-2"
+      style="width:{isHorizontalVerticalMode ? '100%' : '50%'}; "
     >
-      <span
-        style="font-size: 12px;font-weight:500; margin-right:15px;"
-        class="cursor-pointer d-flex align-items-center justify-content-center text-requestBodyColor text-decoration-none"
-        ><span
-          on:click={() => {
-            collectionsMethods.updateRequestState(
-              RequestSection.PARAMETERS,
-              "section",
-            );
-          }}
-          role="button"
-          tabindex="0"
-          on:keydown={() => {}}
-          class="team-menu__link d-flex pb-1"
-          class:tab-active={selectedTab === RequestSection.PARAMETERS}
-          >Parameters
-          <p style="font-size: 12px;" class="mb-0 text-labelColor ps-1">
-            ({parametersCount})
-          </p>
+      <div
+        class="{isCollaps
+          ? 'ps-2 pt-2 pe-5'
+          : 'pt-1 ps-1 pe-5'} d-flex align-items-start text-requestBodyColor"
+      >
+        <span
+          style="font-size: 12px;font-weight:500; margin-right:15px;"
+          class="cursor-pointer d-flex align-items-center justify-content-center text-requestBodyColor text-decoration-none"
+          ><span
+            on:click={() => {
+              collectionsMethods.updateRequestState(
+                RequestSection.PARAMETERS,
+                "section",
+              );
+            }}
+            role="button"
+            tabindex="0"
+            on:keydown={() => {}}
+            class="team-menu__link d-flex pb-1"
+            class:tab-active={selectedTab === RequestSection.PARAMETERS}
+            >Parameters
+            <p style="font-size: 12px;" class="mb-0 text-labelColor ps-1">
+              ({parametersCount})
+            </p>
+          </span>
         </span>
-      </span>
 
-      <span
-        style="font-size: 12px;font-weight:500; margin-right:15px;"
-        class="cursor-pointer d-flex align-items-center justify-content-center text-requestBodyColor text-decoration-none"
-        ><span
-          on:click={() => {
-            collectionsMethods.updateRequestState(
-              RequestSection.REQUEST_BODY,
-              "section",
-            );
-          }}
-          role="button"
-          tabindex="0"
-          on:keydown={() => {}}
-          class="team-menu__link d-flex pb-1"
-          class:tab-active={selectedTab === RequestSection.REQUEST_BODY}
-          >Request Body
+        <span
+          style="font-size: 12px;font-weight:500; margin-right:15px;"
+          class="cursor-pointer d-flex align-items-center justify-content-center text-requestBodyColor text-decoration-none"
+          ><span
+            on:click={() => {
+              collectionsMethods.updateRequestState(
+                RequestSection.REQUEST_BODY,
+                "section",
+              );
+            }}
+            role="button"
+            tabindex="0"
+            on:keydown={() => {}}
+            class="team-menu__link d-flex pb-1"
+            class:tab-active={selectedTab === RequestSection.REQUEST_BODY}
+            >Body
+          </span>
         </span>
-      </span>
 
-      <span
-        style="font-size: 12px;font-weight:500; margin-right:15px;"
-        class="cursor-pointer d-flex align-items-center justify-content-center text-requestBodyColor text-decoration-none"
-        ><span
-          on:click={() => {
-            collectionsMethods.updateRequestState(
-              RequestSection.HEADERS,
-              "section",
-            );
-          }}
-          role="button"
-          tabindex="0"
-          on:keydown={() => {}}
-          class="team-menu__link d-flex pb-1"
-          class:tab-active={selectedTab === RequestSection.HEADERS}
-          >Headers
-          <p style="font-size: 12px;" class="mb-0 text-labelColor ps-1">
-            ({headersCount})
-          </p>
+        <span
+          style="font-size: 12px;font-weight:500; margin-right:15px;"
+          class="cursor-pointer d-flex align-items-center justify-content-center text-requestBodyColor text-decoration-none"
+          ><span
+            on:click={() => {
+              collectionsMethods.updateRequestState(
+                RequestSection.HEADERS,
+                "section",
+              );
+            }}
+            role="button"
+            tabindex="0"
+            on:keydown={() => {}}
+            class="team-menu__link d-flex pb-1"
+            class:tab-active={selectedTab === RequestSection.HEADERS}
+            >Headers
+            <p style="font-size: 12px;" class="mb-0 text-labelColor ps-1">
+              ({headersCount})
+            </p>
+          </span>
         </span>
-      </span>
 
-      <span
-        style="font-size: 12px;font-weight:500; margin-right:15px;"
-        class="cursor-pointer d-flex align-items-center justify-content-center gap-1 text-requestBodyColor text-decoration-none"
-        ><span
-          on:click={() => {
-            collectionsMethods.updateRequestState(
-              RequestSection.AUTHORIZATION,
-              "section",
-            );
-          }}
-          role="button"
-          tabindex="0"
-          on:keydown={() => {}}
-          class="team-menu__link d-flex pb-1 gap-1 align-items-center"
-          class:tab-active={selectedTab === RequestSection.AUTHORIZATION}
-          >Authorization
-          {#if pencilIconState}
-            <img src={penIcon} alt="penIcon" class="w-100 h-100" />
-          {/if}
+        <span
+          style="font-size: 12px;font-weight:500; margin-right:15px;"
+          class="cursor-pointer d-flex align-items-center justify-content-center gap-1 text-requestBodyColor text-decoration-none"
+          ><span
+            on:click={() => {
+              collectionsMethods.updateRequestState(
+                RequestSection.AUTHORIZATION,
+                "section",
+              );
+            }}
+            role="button"
+            tabindex="0"
+            on:keydown={() => {}}
+            class="team-menu__link d-flex pb-1 gap-1 align-items-center"
+            class:tab-active={selectedTab === RequestSection.AUTHORIZATION}
+            >Authorization
+            {#if pencilIconState}
+              <img src={penIcon} alt="penIcon" class="w-100 h-100" />
+            {/if}
+          </span>
         </span>
-      </span>
+      </div>
+      <div class="d-flex align-items-center justify-content-start">
+        {#if selectedTab === RequestSection.PARAMETERS}
+          <Parameters
+            request={createDeepCopy(request)}
+            params={createDeepCopy(request.queryParams)}
+            url={createDeepCopy(request.url)}
+            {collectionsMethods}
+          />
+        {:else if selectedTab === RequestSection.REQUEST_BODY}
+          <RequestBody {activeTab} {collectionsMethods} />
+        {:else if selectedTab === RequestSection.HEADERS}
+          <Headers request={createDeepCopy(request)} {collectionsMethods} />
+        {:else if selectedTab === RequestSection.AUTHORIZATION}
+          <Authorization
+            request={createDeepCopy(request)}
+            {collectionsMethods}
+          />
+        {/if}
+      </div>
     </div>
-    <div class="d-flex align-items-center justify-content-start">
-      {#if selectedTab === RequestSection.PARAMETERS}
-        <Parameters
-          request={createDeepCopy(request)}
-          params={createDeepCopy(request.queryParams)}
-          url={createDeepCopy(request.url)}
-          {collectionsMethods}
-        />
-      {:else if selectedTab === RequestSection.REQUEST_BODY}
-        <RequestBody {activeTab} {collectionsMethods} />
-      {:else if selectedTab === RequestSection.HEADERS}
-        <Headers request={createDeepCopy(request)} {collectionsMethods} />
-      {:else if selectedTab === RequestSection.AUTHORIZATION}
-        <Authorization request={createDeepCopy(request)} {collectionsMethods} />
-      {/if}
-    </div>
-  </div>
 
-  <div
-    style="width:{isHorizontalVerticalMode
-      ? '100%'
-      : '50%'};border-left:1px solid #313233; height:calc(100vh - 200px);"
-    class="left-panel pt-3 px-4 position-relative"
-  >
-    <div class=" d-flex flex-column" style="height:100%;">
-      {#if !response?.status}
-        <DefaultPage />
-      {:else if response?.status === "Not Found"}
-        <ResponseError />
-      {:else if response?.status}
-        <ResponseParams {response} />
-      {/if}
+    <div
+      style="width:{isHorizontalVerticalMode
+        ? '100%'
+        : '50%'};height:calc(100vh - 200px);"
+      class="left-panel pt-3 px-4 position-relative"
+    >
+      <div class=" d-flex flex-column" style="height:100%;">
+        {#if !response?.status}
+          <DefaultPage />
+        {:else if response?.status === "Not Found"}
+          <ResponseError />
+        {:else if response?.status}
+          <ResponseParams {response} />
+        {/if}
 
-      {#if progress}
-        <div
-          class="position-absolute"
-          style="    
+        {#if progress}
+          <div
+            class="position-absolute"
+            style="    
           top: 10px;
           left: 0;
           right: 0;
           bottom: 0;
           z-index:999;"
-        >
-          <Loader />
-        </div>
-      {/if}
+          >
+            <Loader />
+          </div>
+        {/if}
+      </div>
     </div>
   </div>
 </div>
 
 <style>
+  .box {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    user-select: none;
+  }
+
+  .left-panel {
+    transition: width 0.3s ease;
+  }
+
+  :global(.grabber) {
+    position: absolute;
+    box-sizing: border-box;
+  }
+
+  :global(.grabber.right) {
+    width: 2px;
+    height: 100%;
+    background: var(--border-color);
+    left: center;
+    cursor: ew-resize;
+  }
+
+  :global(.hide-grabber .grabber) {
+    border: none !important;
+  }
+
+  :global(.grabber.selected) {
+    border: solid 1px var(--workspace-hover-color);
+  }
+
+  :global(body) {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
   .team-menu__link {
     color: #8a9299;
   }
 
   .tab-active {
     color: white;
-
     border-bottom: 3px solid #85c2ff;
   }
+
   .cursor-pointer {
     cursor: pointer;
   }
