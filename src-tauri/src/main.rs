@@ -145,6 +145,7 @@ async fn create_oauth_window(handle: tauri::AppHandle) {
         "oauth", /* the unique window label */
         tauri::WindowUrl::External("https://dev-api.sparrow.techdomeaks.com/api/auth/google".parse().unwrap()),
     )
+    .title("")
     .build()
     .unwrap();
 }

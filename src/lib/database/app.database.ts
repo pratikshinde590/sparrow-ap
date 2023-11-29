@@ -18,6 +18,7 @@ import { addRxPlugin } from "rxdb";
 import { RxDBMigrationPlugin } from "rxdb/plugins/migration";
 import { RxDBUpdatePlugin } from "rxdb/plugins/update";
 import { RxDBQueryBuilderPlugin } from "rxdb/plugins/query-builder";
+import { sidebarSchema, type SideBarDocType } from "$lib/models/sidebar.model";
 addRxPlugin(RxDBQueryBuilderPlugin);
 addRxPlugin(RxDBMigrationPlugin);
 addRxPlugin(RxDBUpdatePlugin);
@@ -31,11 +32,15 @@ export type CollectionDocument = RxDocument<CollectionDocType>;
 export type TabDocument = RxDocument<TabDocType>;
 export type TabContainer = RxCollection<TabDocType>;
 
+export type SideBarDocument = RxCollection<SideBarDocType>;
+export type SideBarContainer = RxCollection<SideBarDocType>;
+
 // collate all the Rx collections
 export type DatabaseCollections = {
   workspace: WorkspaceContainer;
   tab: TabContainer;
   collection: CollectionContainer;
+  sidebar: SideBarContainer;
 };
 
 // define the Rx database type
@@ -69,6 +74,15 @@ const db = await rxdb.addCollections({
   },
   collection: {
     schema: collectionSchema,
+  },
+  sidebar: {
+    schema: sidebarSchema,
+    migrationStrategies: {
+      // data migration from version 0 to version 1
+      1: function (oldDoc) {
+        return oldDoc;
+      },
+    },
   },
 });
 

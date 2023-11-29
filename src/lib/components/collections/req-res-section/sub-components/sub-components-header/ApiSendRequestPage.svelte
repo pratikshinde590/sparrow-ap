@@ -176,6 +176,8 @@
   const handleKeyPress = (event) => {
     if (event.ctrlKey && event.key === 'Enter') {
       handleSendRequest();
+    } else if (event.ctrlKey && event.code === "KeyL") { 
+      inputElement.focus();
     }
   }
 </script>
