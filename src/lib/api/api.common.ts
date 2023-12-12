@@ -125,7 +125,6 @@ const makeHttpRequest = async (
 
   return Promise.race([
     timeout(apiTimeOut),
-
     invoke("make_type_request_command", {
       url,
       method,
@@ -137,7 +136,8 @@ const makeHttpRequest = async (
     .then(async (data) => {
       response = data;
       try {
-        return success(JSON.parse(response));
+        loadWorker(success(JSON.parse(response)));
+        // return success(JSON.parse(response));
       } catch (e) {
         return error("error");
       }
@@ -146,5 +146,11 @@ const makeHttpRequest = async (
       return error("error");
     });
 };
+
+async function loadWorker(msg) {
+  const SyncWorker = await import("$lib/services/rest-api.worker?worker");
+  const syncWorker = new SyncWorker.default();
+  syncWorker.postMessage(msg);
+}
 
 export { makeRequest, getAuthHeaders, getRefHeaders, makeHttpRequest };

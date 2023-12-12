@@ -28,7 +28,7 @@
   import constants from "$lib/utils/constants";
   import { notifications } from "$lib/utils/notifications";
   import { generateSampleRequest } from "$lib/utils/sample/request.sample";
-    import { invoke } from "@tauri-apps/api";
+  import { invoke } from "@tauri-apps/api";
 
   export let url = "/";
   const tabRepository = new TabRepository();
@@ -42,7 +42,7 @@
         let progressiveTab;
         const tabList = val.map((elem) => {
           let temp = elem.toJSON();
-          if(temp?.property?.request){
+          if (temp?.property?.request) {
             temp.property.request.state.responseSection =
               sample.property.request.state.responseSection;
             temp.property.request.state.responseRaw =

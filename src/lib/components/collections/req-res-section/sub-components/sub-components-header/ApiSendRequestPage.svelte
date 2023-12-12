@@ -69,7 +69,7 @@
         createApiRequest(_apiSendRequest.decodeRestApiData(request))
           .then((response) => {
             let end = Date.now();
-
+            loadWorker(response);
             const byteLength = new TextEncoder().encode(
               JSON.stringify(response),
             ).length;
@@ -116,9 +116,8 @@
             );
             isLoading = false;
           });
-          // For Test purpose (BUG NOT RESOLVED YET)
-          // console.log("running", Date.now() - start )
-
+        // For Test purpose (BUG NOT RESOLVED YET)
+        // console.log("running", Date.now() - start )
       }
     }
   };
