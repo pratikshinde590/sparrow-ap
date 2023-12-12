@@ -49,6 +49,36 @@
     request = event?.property?.request;
   });
 
+  export function handleMessage(response) {
+    let start = Date.now();
+    let end = Date.now();
+    const byteLength = new TextEncoder().encode(
+      JSON.stringify(response),
+    ).length;
+    let responseSizeKB = byteLength / 1024;
+    let duration = end - start;
+
+    let responseBody = response.data.response;
+    let responseHeaders = response.data.headers;
+    let responseStatus = response.data.status;
+    _apiSendRequest.setResponseContentType(responseHeaders, collectionsMethods);
+    collectionsMethods.updateRequestProperty(
+      false,
+      RequestProperty.REQUEST_IN_PROGRESS,
+    );
+    collectionsMethods.updateRequestProperty(
+      {
+        body: responseBody,
+        headers: JSON.stringify(responseHeaders),
+        status: responseStatus,
+        time: duration,
+        size: responseSizeKB,
+      },
+      RequestProperty.RESPONSE,
+    );
+    isLoading = false;
+  }
+
   const handleSendRequest = async () => {
     isInputValid = true;
     const str = urlText;
@@ -69,13 +99,11 @@
         createApiRequest(_apiSendRequest.decodeRestApiData(request))
           .then((response) => {
             let end = Date.now();
-            loadWorker(response);
             const byteLength = new TextEncoder().encode(
               JSON.stringify(response),
             ).length;
             let responseSizeKB = byteLength / 1024;
             let duration = end - start;
-
             let responseBody = response.data.response;
             let responseHeaders = response.data.headers;
             let responseStatus = response.data.status;
@@ -194,6 +222,10 @@
       inputElement.focus();
     }
   };
+
+  const sendRequest = () => {
+    setTimeout(handleSendRequest, 10);
+  };
 </script>
 
 <div class="d-flex flex-column w-100">
@@ -253,7 +285,7 @@
         disabled={disabledSend}
         class="d-flex align-items-center justify-content-center btn btn-primary text-whiteColor ps-3 pe-3 py-2"
         style="font-size: 15px;height:34px; font-weight:400"
-        on:click={handleSendRequest}
+        on:click={sendRequest}
         >{#if isLoading}
           <span
             class="me-1 ms-0 d-flex align-item-center justify-content-start"

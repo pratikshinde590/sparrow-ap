@@ -136,8 +136,8 @@ const makeHttpRequest = async (
     .then(async (data) => {
       response = data;
       try {
-        loadWorker(success(JSON.parse(response)));
-        // return success(JSON.parse(response));
+        // loadWorker(success(JSON.parse(response)));
+        return success(JSON.parse(response));
       } catch (e) {
         return error("error");
       }
