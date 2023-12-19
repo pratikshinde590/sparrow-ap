@@ -48,6 +48,7 @@
 
   async function handleActiveTab() {
     const activeTab = await activeSideBarTabMethods.getActiveTab();
+
     if (activeTab) {
       selectedActiveSideBar = activeTab;
     } else {

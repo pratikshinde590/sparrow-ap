@@ -305,8 +305,9 @@
         class="col-{!isSearchVisible ? '1' : '2'} {showGlobalSearchPopup
           ? 'd-none'
           : ''}"
+        style="z-index: 9999;"
       >
-        <div class="position-relative" style="z-index: 9;">
+        <div class="position-relative">
           <button
             class={`bg-blackColor border-0`}
             id="profile-dropdown"

@@ -22,6 +22,7 @@
   import { isApiCreatedFirstTime } from "$lib/store/request-response-section";
   import { HeaderDashboardViewModel } from "$lib/components/header/header-dashboard/HeaderDashboard.ViewModel";
   import { notifications } from "$lib/utils/notifications";
+
   export let collectionsMethods: CollectionsMethods;
 
   const collections: Observable<CollectionDocument[]> =
@@ -31,8 +32,14 @@
   let currentWorkspaceId: string = "";
   const activeWorkspace: Observable<WorkspaceDocument> =
     collectionsMethods.getActiveWorkspace();
+
   let activeWorkspaceRxDoc: WorkspaceDocument;
   const _workspaceViewModel = new HeaderDashboardViewModel();
+
+  const workspaces: Observable<WorkspaceDocument[]> =
+    _workspaceViewModel.workspaces;
+
+    
 
   const collectionSubscribe = collections.subscribe(
     (value: CollectionDocument[]) => {
@@ -146,6 +153,44 @@
     return;
   };
 
+  const handleWorkspaceTab = async () => {
+    const workspaceObj = generateSampleWorkspace(
+      currentWorkspaceId,
+      new Date().toString(),
+    );
+
+    let totalCollection: number = 0;
+    let totalRequest: number = 0;
+
+    $workspaces.map((item) => {
+      if (item) {
+        console.log(item);
+        if (item._data._id === currentWorkspaceId) {
+          // totalCollection = item?._data?.collections?.length;
+          totalCollection = 0;
+        } else {
+          totalRequest = 0;
+        }
+      }
+    });
+
+    let path: Path = {
+      workspaceId: currentWorkspaceId,
+      collectionId: "",
+    };
+
+    workspaceObj.id = currentWorkspaceId;
+    workspaceObj.name = currentWorkspaceName;
+    workspaceObj.path = path;
+    workspaceObj.property.workspace.requestCount = totalRequest;
+    workspaceObj.property.workspace.collectionCount = 0;
+    workspaceObj.save = true;
+    _workspaceViewModel.addWorkspace(workspaceObj);
+
+    collectionsMethods.handleCreateTab(workspaceObj);
+    moveNavigation("right");
+  };
+
   onDestroy(() => {
     collectionSubscribe.unsubscribe();
     activeWorkspaceSubscribe.unsubscribe();
@@ -155,18 +200,7 @@
 <div class="main-container">
   <div class="header-container">
     <h1 class="main-container-header">Check this Workspace's documentation</h1>
-    <button
-      class="about-btn"
-      on:click={() => {
-        collectionsMethods.handleCreateTab(
-          generateSampleWorkspace(
-            "UNTRACKED-" + uuidv4(),
-            new Date().toString(),
-          ),
-        );
-        moveNavigation("right");
-      }}
-    >
+    <button class="about-btn" on:click={handleWorkspaceTab}>
       <img src={about} alt="" style="font-size: 12px;" />
       About My Workspace</button
     >

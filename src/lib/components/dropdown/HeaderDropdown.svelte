@@ -200,10 +200,10 @@
     <hr class="m-0 p-0 mt-1" />
     <p
       style="cursor:pointer"
-      class="drop-btn d-flex align-items-center mb-2 mt-1 p-1 rounded"
+      class="drop-btn d-flex align-items-center mb-2 mt-1 p-1 rounded sidebar__container_background"
       on:click={() => {
         navigate("/dashboard/workspaces");
-        activeSideBarTabMethods.updateActiveTab("/dashboard/workspaces");
+        activeSideBarTabMethods.updateActiveTab("workspaces");
       }}
       on:click={() => {
         isOpen = true;
@@ -215,6 +215,10 @@
 </div>
 
 <style>
+  .sidebar__container_background {
+    background-color: var(--selected-active-sidebar);
+  }
+
   .dropdown-btn {
     background: none;
     outline: none;

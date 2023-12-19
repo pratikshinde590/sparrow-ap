@@ -11,6 +11,7 @@
   export let selectedActiveSideBarTab;
   function changeSelectedActiveSideBarTab(tab: string) {
     selectedActiveSideBarTab = tab;
+    console.log(activeSideBarTabMethods, selectedActiveSideBarTab);
   }
 </script>
 
@@ -69,9 +70,7 @@
         <div class="sidebar__container--icon pt-2">
           <img src={help} alt="help-icon" />
         </div>
-        <div
-          class={`sidebar__container--text mt-1 text-textColor`}
-        >
+        <div class={`sidebar__container--text mt-1 text-textColor`}>
           <p>Help</p>
         </div>
       </div>
