@@ -16,7 +16,7 @@
 </script>
 
 <div
-  class="d-inline-block position-relative pt-1"
+  class="d-inline-block position-relative tab pt-1"
   style="width: {tabWidth}px; height:35px; margin-left:{index === 0
     ? '10px'
     : ''}"
@@ -103,5 +103,16 @@
     border-top-left-radius: 10px;
     border-top-right-radius: 10px;
     overflow: hidden;
+  }
+  @keyframes tabnimation {
+    0% {
+      left: -200px;
+    }
+    100% {
+      left: 0;
+    }
+  }
+  .tab {
+    animation: tabnimation 0.3s;
   }
 </style>

@@ -27,6 +27,7 @@
   import { isApiCreatedFirstTime } from "$lib/store/request-response-section";
   import folderIcon from "$lib/assets/create_folder.svg";
   import requestIcon from "$lib/assets/create_request.svg";
+  import { slide } from "svelte/transition";
 
   export let title: string;
   export let collection: any;
@@ -386,40 +387,43 @@
   {/if}
 </button>
 
-<div
-  style="padding-left: 15px; padding-right:0; cursor:pointer; display: {visibility
-    ? 'block'
-    : 'none'};"
->
-  <div class="sub-folders ps-3">
-    {#each collection.items as exp}
-      <FileExplorer
-        {collectionsMethods}
-        {collectionList}
-        {collectionId}
-        {currentWorkspaceId}
-        explorer={exp}
-        {visibility}
-      />
-    {/each}
-    {#if showFolderAPIButtons}
-      <div class="mt-2 mb-2">
-        <img
-          class="list-icons"
-          src={folderIcon}
-          alt="+ Folder"
-          on:click={handleFolderClick}
+{#if visibility}
+  <div
+    style="padding-left: 15px; padding-right:0; cursor:pointer; display: {visibility
+      ? 'block'
+      : 'none'};"
+    transition:slide={{ axis: "y", duration: 200 }}
+  >
+    <div class="sub-folders ps-3">
+      {#each collection.items as exp}
+        <FileExplorer
+          {collectionsMethods}
+          {collectionList}
+          {collectionId}
+          {currentWorkspaceId}
+          explorer={exp}
+          {visibility}
         />
-        <img
-          class="list-icons"
-          src={requestIcon}
-          alt="+ API Request"
-          on:click={handleAPIClick}
-        />
-      </div>
-    {/if}
+      {/each}
+      {#if showFolderAPIButtons}
+        <div class="mt-2 mb-2">
+          <img
+            class="list-icons"
+            src={folderIcon}
+            alt="+ Folder"
+            on:click={handleFolderClick}
+          />
+          <img
+            class="list-icons"
+            src={requestIcon}
+            alt="+ API Request"
+            on:click={handleAPIClick}
+          />
+        </div>
+      {/if}
+    </div>
   </div>
-</div>
+{/if}
 
 <style>
   .my-button:hover .threedot-icon-container {

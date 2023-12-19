@@ -24,6 +24,7 @@
   import { isApiCreatedFirstTime } from "$lib/store/request-response-section";
     import { handleFolderClick } from "$lib/utils/helpers/handle-clicks.helper";
   import requestIcon from "$lib/assets/create_request.svg";
+  import { slide } from "svelte/transition";
 
   let expand: boolean = false;
   export let explorer;
@@ -331,29 +332,37 @@
       </button>
     {/if}
   </div>
-  <div
-    style="padding-left: 12px; cursor:pointer; display: {expand
-      ? 'block'
-      : 'none'};"
-  >
-    <div class="sub-files ps-3">
-      {#each explorer.items as exp}
-        <svelte:self
-          folderId={explorer.id}
-          folderName={explorer.name}
-          explorer={exp}
-          {collectionId}
-          {currentWorkspaceId}
-          {collectionsMethods}
-        />
-      {/each}
-      {#if showFolderAPIButtons}
-        <div class="mt-2 mb-2 ms-0">
-          <img class="list-icons"  src={requestIcon} alt="+ API Request" on:click={handleAPIClick}>
-        </div>
-      {/if}
+  {#if expand}
+    <div
+      style="padding-left: 12px; cursor:pointer; display: {expand
+        ? 'block'
+        : 'none'};"
+      transition:slide={{ axis: "y", duration: 200 }}
+    >
+      <div class="sub-files ps-3">
+        {#each explorer.items as exp}
+          <svelte:self
+            folderId={explorer.id}
+            folderName={explorer.name}
+            explorer={exp}
+            {collectionId}
+            {currentWorkspaceId}
+            {collectionsMethods}
+          />
+        {/each}
+        {#if showFolderAPIButtons}
+          <div class="mt-2 mb-2 ms-0">
+            <img
+              class="list-icons"
+              src={requestIcon}
+              alt="+ API Request"
+              on:click={handleAPIClick}
+            />
+          </div>
+        {/if}
+      </div>
     </div>
-  </div>
+  {/if}
 {:else}
   <div style="cursor:pointer;">
     <File
