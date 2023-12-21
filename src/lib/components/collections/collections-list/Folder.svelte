@@ -425,23 +425,27 @@
           explorer={exp}
           {visibility}
           {activeTabId}
-        {activePath}
-      />
+          {activePath}
+        />
       {/each}
       {#if showFolderAPIButtons}
-        <div class="mt-2 mb-2">
-          <img
-            class="list-icons"
-            src={folderIcon}
-            alt="+ Folder"
-            on:click={handleFolderClick}
-          />
-          <img
-            class="list-icons"
-            src={requestIcon}
-            alt="+ API Request"
-            on:click={handleAPIClick}
-          />
+        <div class="mt-2 mb-2" style="display: flex;">
+          <Tooltip text={`Add Folder`}>
+            <img
+              class="list-icons"
+              src={folderIcon}
+              alt="+ Folder"
+              on:click={handleFolderClick}
+            />
+          </Tooltip>
+          <Tooltip text={`Add Request`}>
+            <img
+              class="list-icons"
+              src={requestIcon}
+              alt="+ API Request"
+              on:click={handleAPIClick}
+            />
+          </Tooltip>
         </div>
       {/if}
     </div>

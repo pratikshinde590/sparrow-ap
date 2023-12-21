@@ -26,6 +26,7 @@
   import requestIcon from "$lib/assets/create_request.svg";
   import { slide } from "svelte/transition";
   import angleRight from "$lib/assets/angleRight.svg";
+  import Tooltip from "$lib/components/tooltip/Tooltip.svelte";
 
   let expand: boolean = false;
   export let explorer;
@@ -377,21 +378,18 @@
             {currentWorkspaceId}
             {collectionsMethods}
             {activeTabId}
-        />
+          />
         {/each}
         {#if showFolderAPIButtons}
           <div class="mt-2 mb-2 ms-0">
-            <img
-             
-            class="list-icons"
-            
-            src={requestIcon}
-             
-            alt="+ API Request"
-             
-            on:click={handleAPIClick}
-            
-          />
+            <Tooltip text={`Add Request`}>
+              <img
+                class="list-icons"
+                src={requestIcon}
+                alt="+ API Request"
+                on:click={handleAPIClick}
+              />
+            </Tooltip>
           </div>
         {/if}
       </div>
