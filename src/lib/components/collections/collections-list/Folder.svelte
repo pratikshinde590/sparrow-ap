@@ -37,6 +37,8 @@
   let showFolderAPIButtons: boolean = true;
   export let collectionList;
   export let collectionsMethods: CollectionsMethods;
+  export let activeTabId: string;
+  export let activePath;
 
   const collectionService = new CollectionService();
   const _colllectionListViewModel = new CollectionListViewModel();
@@ -287,6 +289,13 @@
       disabled: false,
     },
   ];
+  $: {
+    if (activePath) {
+      if (activePath.collectionId === collection.id) {
+        visibility = true;
+      }
+    }
+  }
 </script>
 
 {#if isCollectionPopup}
@@ -331,18 +340,13 @@
 
 <button
   style="height:36px; border-color: {showMenu ? '#ff7878' : ''}"
-  class="btn-primary d-flex w-100 align-items-center justify-content-between border-0 py-1 ps-2 my-button"
+  class="btn-primary d-flex w-100 align-items-center justify-content-between border-0 ps-2 my-button {collection.id ===
+  activeTabId
+    ? 'active-collection-tab'
+    : ''}"
 >
   <div
     on:contextmenu|preventDefault={(e) => rightClickContextMenu(e)}
-    on:click={() => {
-      isCollectionCreatedFirstTime.set(false);
-
-      if (!collection.id.includes(UntrackedItems.UNTRACKED)) {
-        visibility = !visibility;
-        handleCollectionClick(collection, currentWorkspaceId, collectionId);
-      }
-    }}
     class="d-flex main-collection align-items-center"
   >
     <img
@@ -352,6 +356,11 @@
         ? 'transform:rotate(90deg);'
         : 'transform:rotate(0deg);'}"
       alt="angleRight"
+      on:click={() => {
+        if (!collection.id.includes(UntrackedItems.UNTRACKED)) {
+          visibility = !visibility;
+        }
+      }}
     />
     {#if isRenaming}
       <input
@@ -366,9 +375,21 @@
         on:keydown={onRenameInputKeyPress}
       />
     {:else}
-      <p class="mb-0 ellipsis" style="font-size: 12px;">
-        {title}
-      </p>
+      <div
+        class="collection-title d-flex align-items-center py-1 mb-0"
+        style="height: 36px;"
+        on:click={() => {
+          isCollectionCreatedFirstTime.set(false);
+
+          if (!collection.id.includes(UntrackedItems.UNTRACKED)) {
+            handleCollectionClick(collection, currentWorkspaceId, collectionId);
+          }
+        }}
+      >
+        <p class="ellipsis w-100 mb-0" style="font-size: 12px;">
+          {title}
+        </p>
+      </div>
     {/if}
   </div>
   {#if collection.id.includes(UntrackedItems.UNTRACKED)}
@@ -403,7 +424,9 @@
           {currentWorkspaceId}
           explorer={exp}
           {visibility}
-        />
+          {activeTabId}
+        {activePath}
+      />
       {/each}
       {#if showFolderAPIButtons}
         <div class="mt-2 mb-2">
@@ -440,7 +463,7 @@
   }
   .threedot-icon-container {
     visibility: hidden;
-    background-color: var(--border-color);
+    background-color: transparent;
   }
 
   .threedot-active {
@@ -455,10 +478,10 @@
     background-color: var(--background-color);
     color: var(--white-color);
     padding-right: 5px;
+    border-radius: 8px;
   }
 
   .btn-primary:hover {
-    border-radius: 8px;
     background-color: var(--border-color);
     color: var(--white-color);
   }
@@ -504,5 +527,12 @@
   }
   .main-collection {
     width: calc(100% - 24px);
+  }
+  .active-collection-tab {
+    background-color: var(--selected-active-sidebar) !important;
+  }
+  .collection-title {
+    width: calc(100% - 30px);
+    text-align: left;
   }
 </style>

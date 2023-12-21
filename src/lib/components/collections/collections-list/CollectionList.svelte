@@ -33,6 +33,8 @@
   import { isCollectionCreatedFirstTime } from "$lib/store/collection";
   export let deleteCollectionData;
   export let collectionsMethods: CollectionsMethods;
+  export let activeTabId: string;
+  export let activePath;
 
   const _colllectionListViewModel = new CollectionListViewModel();
   const _workspaceViewModel = new HeaderDashboardViewModel();
@@ -232,7 +234,6 @@
         .getElementsByClassName("sidebar")[0]
         .classList.remove("decrease-width");
     }
-
   };
 
   let filteredCollection = [];
@@ -442,6 +443,8 @@
             collection={col}
             title={col.name}
             {collectionsMethods}
+            {activeTabId}
+            {activePath}
           />
         {/each}
       {:else if collection.length > 0}
@@ -453,6 +456,8 @@
             collection={col}
             title={col.name}
             {collectionsMethods}
+            {activeTabId}
+            {activePath}
           />
         {/each}
       {:else if collection && collection.length === 0}
@@ -536,8 +541,10 @@
   .decrease-width {
     animation: decreaseWidth 0.3s;
     width: 0;
+    max-width: 280px;
   }
   .increase-width {
     animation: increaseWidth 0.3s;
+    max-width: 280px;
   }
 </style>
