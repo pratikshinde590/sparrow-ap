@@ -14,8 +14,8 @@ export class EnvironmentViewModel {
     this.environmentRepository.addEnvironment(environment);
   };
 
-  public updateEnvironment = (uuid, data) => {
-    this.environmentRepository.updateEnvironment(uuid, data);
+  public updateEnvironment = async (uuid, data) => {
+    return await this.environmentRepository.updateEnvironment(uuid, data);
   };
 
   public deleteEnvironment = (id) => {

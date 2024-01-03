@@ -6,7 +6,7 @@ export interface EnvironmentRepositoryMethods {
   bulkInsert: (data: any) => any;
   getEnvironmentDocument: (data: EnvironmentDocument) => any;
   addEnvironment: (environment) => void;
-  updateEnvironment: (uuid: string, data) => void;
+  updateEnvironment: (uuid: string, data) => any;
   getParticularEnvironment: (environmentId: string) => any;
   removeEnvironment: (environmentId: string) => void;
 }

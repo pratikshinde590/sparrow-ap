@@ -70,6 +70,7 @@
         if (!isPresent) {
           handleActivateEnvironment(globalEnvrionment?.id);
         }
+
         environment = filteredEnvironments;
         return;
       }
@@ -103,7 +104,9 @@
       id: UntrackedItems.UNTRACKED + uuidv4(),
       name: getNextEnvironment(environment, "New Environment"),
       variable: [],
+      type: "LOCAL",
       createdAt: new Date().toISOString(),
+      isActive: false,
     };
 
     environmentRepositoryMethods.addEnvironment(newEnvironment);
@@ -121,7 +124,8 @@
         _id: response.data.data._id,
         name: newEnvironment.name,
       });
-      _environmentListViewModel.activateEnvironment(newEnvironment.id);
+      debugger;
+      _environmentListViewModel.activateEnvironment(res._id);
       notifications.success("New Environment Created!");
       return;
     }
@@ -165,7 +169,9 @@
   let containerRef;
   function rightClickContextMenu(e, id) {
     e.preventDefault();
-    document.querySelectorAll('.show-more-icon').forEach(item => item.classList.remove('active'));
+    document
+      .querySelectorAll(".show-more-icon")
+      .forEach((item) => item.classList.remove("active"));
     currentSelectedId = id;
     e.target.classList.toggle("active");
     setTimeout(() => {
@@ -246,7 +252,9 @@
   ];
   function closeRightClickContextMenu() {
     showMenu = false;
-    document.querySelectorAll('.show-more-icon').forEach(item => item.classList.remove('active'));
+    document
+      .querySelectorAll(".show-more-icon")
+      .forEach((item) => item.classList.remove("active"));
   }
 </script>
 
@@ -385,7 +393,7 @@
                 rightClickContextMenu(e, env.id);
               }}
             >
-              {#if env.type == undefined && environmentUnderCreation}
+              {#if env.id.includes(UntrackedItems.UNTRACKED) && environmentUnderCreation}
                 <Spinner size={"15px"} />
               {:else}
                 <ShowMoreIcon />

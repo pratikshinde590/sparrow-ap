@@ -33,7 +33,7 @@ export class EnvironmentRepository {
         },
       })
       .exec();
-    environment.incrementalModify((value) => {
+    await environment.incrementalModify((value) => {
       if (data.name) value.name = data.name;
       if (data.variable) value.variable = data.variable;
       if (data.type) value.type = data.type;
