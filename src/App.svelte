@@ -31,7 +31,9 @@
   import { invoke } from "@tauri-apps/api";
   import { createDeepCopy } from "$lib/utils/helpers/conversion.helper";
   import WelcomeScreen from "$lib/components/Transition/WelcomeScreen.svelte";
-
+  import { checkUpdate, installUpdate } from "@tauri-apps/api/updater";
+  import { relaunch } from "@tauri-apps/api/process";
+  
   export let url = "/";
   const tabRepository = new TabRepository();
   let flag: boolean = true;
@@ -65,6 +67,25 @@
   });
 
   onMount(async () => {
+    try {
+      const { shouldUpdate, manifest } = await checkUpdate();
+      console.log(shouldUpdate)
+      console.log(manifest)
+      if (shouldUpdate) {
+        // display dialog
+        await installUpdate();
+        // install complete, restart app
+        await relaunch();
+      }
+    } catch (error) {
+      console.log(error);
+    }
+    listen("tauri://update-available", function (res) {
+      console.log("New version available: ", res);
+    });
+    listen("tauri://update-status", function (res) {
+      console.log("New status: ", res);
+    });
     listen("receive-login", async (event: any) => {
       const params = new URLSearchParams(event.payload.url.split("?")[1]);
       const accessToken = params.get("accessToken");
