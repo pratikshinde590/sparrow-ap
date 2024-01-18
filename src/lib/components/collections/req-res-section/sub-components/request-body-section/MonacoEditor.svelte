@@ -96,7 +96,7 @@
         { token: "delimiter", foreground: "#FFFFFF" },
       ],
       colors: {
-        "editor.background": '#1E1E1E',
+        "editor.background": "#1E1E1E",
       },
     });
     monaco.editor.setTheme("myTheme");
@@ -107,7 +107,7 @@
       autoIndent: "brackets",
       formatOnPaste: true,
       formatOnType: true,
-      wordWrap:"on",
+      wordWrap: "on",
       fixedOverflowWidgets: true,
       autoDetectHighContrast: false,
       scrollbar: {
@@ -256,22 +256,20 @@
   });
 
   let isHorizontalMode: boolean;
-  const isHorizontalUnsubscribe = isHorizontal.subscribe(
-    (value) => {
-      isHorizontalMode = value;
-    },
-  );
+  const isHorizontalUnsubscribe = isHorizontal.subscribe((value) => {
+    isHorizontalMode = value;
+  });
 
   onDestroy(() => {
     isHorizontalUnsubscribe();
   });
 </script>
 
-<div class="code-editor" bind:this={editorElement} />
+<!-- <div class="code-editor" bind:this={editorElement} /> -->
 
 <style>
-  .code-editor {
+  /* .code-editor {
     width: 99%;
     height: 250px;
-  }
+  } */
 </style>

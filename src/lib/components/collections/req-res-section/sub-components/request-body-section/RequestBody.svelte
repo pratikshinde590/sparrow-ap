@@ -20,9 +20,9 @@
   import crossIcon from "$lib/assets/cross.svg";
   export let collectionsMethods: CollectionsMethods;
   export let activeTab;
-  export let environmentVariables;
+  export let environmentVariables: any;
 
-  import MonacoEditor from "./MonacoEditor.svelte";
+  import CodeMirror from "./CodeMirror.svelte";
 
   let currentTabId: string = "";
   let mainTab: string;
@@ -200,7 +200,7 @@
     {/if}
   </div>
   {#if mainTab === RequestDataset.RAW}
-    <MonacoEditor
+    <CodeMirror
       bind:value={inputValue}
       callback={handleRawChange}
       {rawTab}
