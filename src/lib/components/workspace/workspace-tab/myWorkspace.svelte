@@ -4,6 +4,7 @@
   import { HeaderDashboardViewModel } from "../../header/header-dashboard/HeaderDashboard.ViewModel";
   import type { CollectionsMethods } from "$lib/utils/interfaces/collections.interface";
   import Tooltip from "../../tooltip/Tooltip.svelte";
+  import InviteMemberPopup from "../../Modal/InviteMemberPopup.svelte";
   import icons from "$lib/assets/app.asset";
   import { user } from "$lib/store/auth.store";
   import { isWorkspaceCreatedFirstTime } from "$lib/store/workspace.store";
@@ -14,6 +15,8 @@
   } from "$lib/database/app.database";
   import type { CollectionListViewModel } from "$lib/components/collections/collections-list/CollectionList.ViewModel";
   export let collectionsMethods: CollectionsMethods;
+  import WorkspaceSideBar from "../WorkspaceSidebar.svelte"
+  import WorkspaceSetting from "../WorkspaceSetting.svelte";
   export let activeTab;
   const _viewModel = new HeaderDashboardViewModel();
   let tabName: string = "";
@@ -22,6 +25,19 @@
   let newWorkspaceName: string;
   let ownerName: string;
   let noOfCollections = 0;
+  let loggedInUserEmail:string="";
+
+
+  let isActiveInvitePopup=false;
+  let currentWorkspaceDetails={
+    id:"",
+    name:""
+  }
+  // type TAB="ABOUT"|"SETTING"
+  let currentTab:"ABOUT"|"SETTING"="ABOUT";
+  let users:{}[]=[];
+
+  let currentWorkspaceTeamName:string;
   const activeWorkspace: Observable<WorkspaceDocument> =
     _viewModel.activeWorkspace;
   const tabSubscribe = activeTab.subscribe((event: NewTab) => {
@@ -31,6 +47,9 @@
       componentData = event;
     }
   });
+  const handleInvitePopup=(showPopup:boolean)=>{
+    isActiveInvitePopup=showPopup;
+  }
   export let _collectionListViewModel: CollectionListViewModel;
   const collections: Observable<CollectionDocument[]> =
     _collectionListViewModel.collection;
@@ -75,30 +94,25 @@
   );
 
   let name: string = "";
-  let email: string = "";
-  let firstLetter;
   const unsubscribeUser = user.subscribe((value) => {
     if (value) {
       if (value.personalWorkspaces) {
-        name = value?.personalWorkspaces[0]?.name;
+        name = value. personalWorkspaces[0]?.name;
       }
-      if (name) {
-        firstLetter = name[0];
+      if (!name) {
+        name = value?.email;
       }
-      email = value?.email;
+      loggedInUserEmail=value.email;
+     
     }
   });
-
   const activeWorkspaceSubscribe = activeWorkspace.subscribe(
     (value: WorkspaceDocument) => {
       if (value) {
-        ownerName = value._data.owner.name;
-        if (ownerName) {
-          name = ownerName;
-          firstLetter = name[0];
-        } else {
-          name = name;
-        }
+       currentWorkspaceDetails.id=value._data._id,
+       currentWorkspaceDetails.name=value._data.name
+      currentWorkspaceTeamName=value._data?.team?.name;
+      users=value._data.users;
       }
     },
   );
@@ -148,9 +162,13 @@
       inputField.blur();
     }
   };
+  const handleWorkspaceTab=(tab:"ABOUT" | "SETTING")=>{
+   currentTab=tab;
+  }
 </script>
 
 <div class="main-container d-flex">
+  {#if currentTab==="ABOUT"}
   <div
     class="my-workspace d-flex flex-column"
     style="width:calc(100% - 280px); margin-top: 15px;"
@@ -171,8 +189,11 @@
       />
 
       <Tooltip>
-        <button class="btn btn-primary rounded border-0 py-1">Invite</button>
+        <button class="btn btn-primary rounded border-0 py-1" on:click={()=>{handleInvitePopup(true)}}>Invite</button>
       </Tooltip>
+      {#if isActiveInvitePopup}
+	<InviteMemberPopup   handleInvitePopup={handleInvitePopup}  currentWorkspaceDetails={currentWorkspaceDetails}  teamName={currentWorkspaceTeamName} addUsersInWorkspace={_viewModel.addUsersInWorkspace} updateUsersInWorkspace={_viewModel.updateUsersInWorkspace} ></InviteMemberPopup>
+  {/if}
     </div>
     <div class="d-flex align-items-start ps-0 h-100">
       <textarea
@@ -184,57 +205,11 @@
       />
     </div>
   </div>
-  <div
-    class="d-flex flex-column align-items-left justify-content-start"
-    style="width: 280px;border-left:2px solid #313233"
-  >
-    <div
-      class="d-flex flex-column text-whiteColor mt-4 ps-3 gap-1"
-      style="font-size: 12px;"
-    >
-      <div
-        class="d-flex align-items-center gap-2 mt-2 info-setting-hover rounded py-2 cursor-pointer"
-      >
-        <img src={icons.info} alt="info" class="ps-2" />
-        <p class="mb-0">About</p>
-      </div>
-      <div
-        class="d-flex align-items-center gap-2 info-setting-hover rounded py-2"
-      >
-        <img src={icons.setting} alt="settings" class="ps-2" />
-        <p class="mb-0">Workspace Settings</p>
-      </div>
-      <div class="mb-3 mt-2">
-        <img src={icons.line} alt="lineicon" />
-      </div>
-      <div class="d-flex flex-column">
-        <p class="fw-bold fs-6 text-textColor ps-3">Last Activity by</p>
-        <div class="d-flex align-items-center ps-3 gap-2">
-          <button
-            class="bg-backgroundColor border-0"
-            id="profile-dropdown"
-            style="width: 24px; height: 24px;border-radius:50%"
-          >
-            <p
-              class="mb-0 profile-circle bg-plusButton text-black m-auto text-center d-flex align-items-center justify-content-center"
-              style="width: 100%; height: 100%; margin: 0;"
-            >
-              {!firstLetter
-                ? email[0]?.toUpperCase()
-                : firstLetter?.toUpperCase()}
-            </p>
-          </button>
-          <p class="mb-0">{!name ? email : name}</p>
-        </div>
-      </div>
-    </div>
-    <div class="workspace-info gap-3 text-defaultColor">
-      <p>
-        <span class="me-1 fs-6 text-plusButton">{noOfCollections}</span
-        >COLLECTION
-      </p>
-    </div>
-  </div>
+  {:else if currentTab==="SETTING"}
+      <WorkspaceSetting  getUserDetailsOfWorkspace={_viewModel.getUserDetailsOfWorkspace} loggedInUserEmail={loggedInUserEmail}   currentWorkspaceDetails={currentWorkspaceDetails}>
+  </WorkspaceSetting>
+  {/if}
+  <WorkspaceSideBar  handleWorkspaceTab={handleWorkspaceTab}  noOfCollections={ noOfCollections}  name={name}></WorkspaceSideBar>
 </div>
 
 <style>
@@ -250,14 +225,6 @@
     z-index: 5;
   }
 
-  .profile-circle {
-    border-radius: 50%;
-  }
-
-  .info-setting-hover:hover {
-    background-color: var(--border-color);
-  }
-
   textarea::placeholder {
     font-size: 12px;
     color: var(--text-color);
@@ -271,12 +238,5 @@
     outline: 2px solid var(--sparrow-blue);
   }
 
-  .workspace-info {
-    position: fixed;
-    bottom: 0;
-    padding: 15px;
-    display: flex;
-    width: 100%;
-    font-size: 12px;
-  }
+ 
 </style>

@@ -22,6 +22,9 @@
   import type { WorkspaceDocument } from "$lib/database/app.database";
   import type { Observable } from "rxjs";
   import { environmentType } from "$lib/utils/enums/environment.enum";
+  import WorkspaceSetting from "$lib/components/workspace/WorkspaceSetting.svelte";
+  import { user } from "$lib/store/auth.store";
+
 
   const _viewModel = new CollectionsViewModel();
   const _collectionListViewModel = new CollectionListViewModel();
@@ -84,6 +87,7 @@
       moveNavigation("right");
     }
   };
+  let currentWorkspaceName:string;
 
   const collapseCollectionPanel = collapsibleState;
   const activeWorkspace: Observable<WorkspaceDocument> =
@@ -94,6 +98,7 @@
       const activeWorkspaceRxDoc = value;
       if (activeWorkspaceRxDoc) {
         const environmentId = activeWorkspaceRxDoc.get("environmentId");
+        currentWorkspaceName=value._data.name;
         if (environments) {
           const env = $environments;
           if (env?.length > 0) {
@@ -126,6 +131,12 @@
       }
     },
   );
+  let name:string;
+  const unsubscribeUser = user.subscribe((value) => {
+    if (value) {
+        name= value?.email;
+      }
+  });
 
   const onTabsSwitched=()=>{
     _viewModel.syncTabWithStore();
@@ -173,7 +184,7 @@
               {activeTab}
               {collectionsMethods}
               {_collectionListViewModel}
-            />
+            />          
           {:else if $activeTab && $activeTab.type === ItemType.FOLDER}
             <MyFolder
               {collectionsMethods}

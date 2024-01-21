@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { RxDB, type WorkspaceDocument } from "$lib/database/app.database";
+import type { addUsersInWorkspacePayload } from "$lib/utils/dto";
 import type { CollectionItem } from "$lib/utils/interfaces/collection.interface";
 
 import type { Observable } from "rxjs";
@@ -154,5 +155,19 @@ export class WorkspaceRepository {
     await this.clearWorkspaces();
     await RxDB.getInstance().rxdb.workspace.bulkInsert(data);
     return;
+  };
+
+  public addUserInWorkspace = async (
+    workspaceId: string,
+    user: addUsersInWorkspacePayload,
+  ): Promise<void> => {
+    const workspace = await RxDB.getInstance()
+      .rxdb.workspace.findOne({
+        selector: {
+          _id: workspaceId,
+        },
+      })
+      .exec();
+    await workspace.patch({ user: user });
   };
 }

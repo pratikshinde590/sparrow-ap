@@ -17,6 +17,7 @@ import { EnvironmentService } from "$lib/services/environment.service";
 import { environmentType } from "$lib/utils/enums/environment.enum";
 import { EnvironmentTabRepository } from "$lib/repositories/environment-tab.repository";
 import { generateSampleEnvironment } from "$lib/utils/sample/environment.sample";
+import type { addUsersInWorkspacePayload } from "$lib/utils/dto";
 
 export class HeaderDashboardViewModel {
   constructor() {}
@@ -143,29 +144,32 @@ export class HeaderDashboardViewModel {
   // sync workspace data with backend server
   public refreshWorkspaces = async (userId: string): Promise<void> => {
     const response = await this.workspaceService.fetchWorkspaces(userId);
-
     if (response?.isSuccessful && response?.data?.data) {
       const data = response.data.data.map((elem, index) => {
         const {
           _id,
           name,
           description,
-          owner,
-          permissions,
           createdAt,
           createdBy,
           collection,
+          team,
+          admins,
+          environments,
+          users,
         } = elem;
         return {
           _id,
           name,
           description,
-          owner,
-          permissions,
           collections: collection ? collection : [],
           isActiveWorkspace: !index ? true : false,
           createdAt,
           createdBy,
+          team,
+          admins,
+          environments,
+          users,
         };
       });
 
@@ -229,5 +233,31 @@ export class HeaderDashboardViewModel {
 
   public getServerEnvironments = async (workspaceId: string) => {
     return await this.environmentService.fetchAllEnvironments(workspaceId);
+  };
+
+  public addUsersInWorkspace = async (
+    workspaceId: string,
+    addUsersInWorkspaceDto: addUsersInWorkspacePayload,
+  ) => {
+    const response = await this.workspaceService.addUsersInWorkspace(
+      workspaceId,
+      addUsersInWorkspaceDto,
+    );
+    return response;
+  };
+  public getUserDetailsOfWorkspace = async (workspaceId: string) => {
+    const userDetails =
+      await this.workspaceService.getUserDetailsOfWorkspace(workspaceId);
+    return userDetails;
+  };
+  public updateUsersInWorkspace = async (
+    workspaceId: string,
+    users: addUsersInWorkspacePayload,
+  ) => {
+    const response = await this.workspaceRepository.addUserInWorkspace(
+      workspaceId,
+      users,
+    );
+    return response;
   };
 }

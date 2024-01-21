@@ -98,13 +98,6 @@
         activeWorkspaceRxDoc = value;
         activeWorkspaceId = value._data._id;
         activeWorkspaceName = value._data.name;
-        ownerName = value._data.owner.name;
-        if (ownerName) {
-          name = ownerName;
-          firstLetter = name[0];
-        } else {
-          name = name;
-        }
         if (trackWorkspaceId !== value.get("_id")) {
           const response = await _viewModel.getServerEnvironments(
             value.get("_id"),
@@ -124,8 +117,8 @@
   let firstLetter;
   const unsubscribeUser = user.subscribe((value) => {
     if (value) {
-      if (value.personalWorkspaces) {
-        name = value?.personalWorkspaces[0]?.name;
+      if (value.workspace) {
+        name = value?.workspaces[0]?.name;
       }
       email = value?.email;
       if (name) {
