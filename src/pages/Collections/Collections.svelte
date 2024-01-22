@@ -18,17 +18,18 @@
   import MyFolder from "$lib/components/collections/folder-tab/MyFolder.svelte";
   import { Motion } from "svelte-motion";
   import { scaleMotionProps } from "$lib/utils/animations";
-  import { onDestroy } from "svelte";
+  import { onDestroy, onMount } from "svelte";
   import type { WorkspaceDocument } from "$lib/database/app.database";
   import type { Observable } from "rxjs";
   import { environmentType } from "$lib/utils/enums/environment.enum";
   import WorkspaceSetting from "$lib/components/workspace/WorkspaceSetting.svelte";
   import { user } from "$lib/store/auth.store";
 
-
+  import { ActiveSideBarTabReposistory } from "$lib/repositories/active-sidebar-tab.repository";
+  let runAnimation: boolean = false;
   const _viewModel = new CollectionsViewModel();
   const _collectionListViewModel = new CollectionListViewModel();
-
+  const _activeSidebarTabViewModel = new ActiveSideBarTabReposistory();
   const collectionsMethods: CollectionsMethods = {
     handleActiveTab: _viewModel.handleActiveTab,
     handleCreateTab: _viewModel.handleCreateTab,
@@ -87,7 +88,7 @@
       moveNavigation("right");
     }
   };
-  let currentWorkspaceName:string;
+  let currentWorkspaceName: string;
 
   const collapseCollectionPanel = collapsibleState;
   const activeWorkspace: Observable<WorkspaceDocument> =
@@ -98,7 +99,7 @@
       const activeWorkspaceRxDoc = value;
       if (activeWorkspaceRxDoc) {
         const environmentId = activeWorkspaceRxDoc.get("environmentId");
-        currentWorkspaceName=value._data.name;
+        currentWorkspaceName = value._data.name;
         if (environments) {
           const env = $environments;
           if (env?.length > 0) {
@@ -131,16 +132,20 @@
       }
     },
   );
-  let name:string;
+  let name: string;
   const unsubscribeUser = user.subscribe((value) => {
     if (value) {
-        name= value?.email;
-      }
+      name = value?.email;
+    }
   });
 
-  const onTabsSwitched=()=>{
+  const onTabsSwitched = () => {
     _viewModel.syncTabWithStore();
-  }
+  };
+  const changeAnimation = () => {
+    runAnimation = true;
+  };
+
   onDestroy(() => {
     activeWorkspaceSubscribe.unsubscribe();
   });
@@ -150,6 +155,8 @@
   <div class="d-flex collection" use:motion>
     <div class="collections__list">
       <CollectionsList
+        {runAnimation}
+        {changeAnimation}
         activeTabId={$activeTab?.id}
         activePath={$activeTab?.path}
         environments={$environments}
@@ -157,16 +164,20 @@
       />
     </div>
     <div
-      class="collections__tools bg-backgroundColor {$collapseCollectionPanel
+      style="width: {$collapseCollectionPanel
+        ? 'calc(100vw - 72px)'
+        : 'calc(100vw - 352px)'};"
+      class="collections__tools bg-backgroundColor {$collapseCollectionPanel &&
+      runAnimation
         ? 'sidebar-collapse'
-        : 'sidebar-expand'}"
+        : runAnimation && 'sidebar-expand'}"
     >
       <div class="tab__bar">
         <TabBar
           tabList={$tabList}
           _tabId={$activeTab?.id}
           {collectionsMethods}
-          onTabsSwitched={onTabsSwitched}
+          {onTabsSwitched}
         />
       </div>
       <div class="tab__content d-flex">
@@ -184,7 +195,7 @@
               {activeTab}
               {collectionsMethods}
               {_collectionListViewModel}
-            />          
+            />
           {:else if $activeTab && $activeTab.type === ItemType.FOLDER}
             <MyFolder
               {collectionsMethods}
