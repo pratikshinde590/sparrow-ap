@@ -286,6 +286,7 @@ export class HeaderDashboardViewModel {
       workspaceId,
       addUsersInWorkspaceDto,
     );
+    console.log("response", response);
     return response;
   };
   public getUserDetailsOfWorkspace = async (workspaceId: string) => {

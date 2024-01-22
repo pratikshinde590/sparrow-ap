@@ -139,7 +139,7 @@
         collectionId: "",
       };
 
-      workspaceObj.id = response.data.data._id;
+      workspaceObj._id = response.data.data._id;
       workspaceObj.name = response.data.data.name;
       workspaceObj.description = response.data.data?.description;
       workspaceObj.team = response.data.data?.team;
@@ -160,9 +160,9 @@
       openCreateWorkspaceModal = false;
       moveNavigation("right");
       navigate("/dashboard/collections");
-      await _viewModel.activateWorkspace(workspaceObj.id);
+      await _viewModel.activateWorkspace(workspaceObj._id);
       collectionsMethods.handleCreateTab(workspaceObj);
-      collectionsMethods.handleActiveTab(workspaceObj.id);
+      collectionsMethods.handleActiveTab(workspaceObj._id);
       activeSideBarTabMethods.updateActiveTab("collections");
     }
   };

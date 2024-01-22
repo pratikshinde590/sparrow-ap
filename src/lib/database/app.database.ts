@@ -33,8 +33,8 @@ import {
   environmentTabSchema,
   type EnvironmentTabDocType,
 } from "$lib/models/environment-tab.model";
-import { RxDBDevModePlugin } from "rxdb/plugins/dev-mode";
-addRxPlugin(RxDBDevModePlugin);
+// import { RxDBDevModePlugin } from "rxdb/plugins/dev-mode";
+// addRxPlugin(RxDBDevModePlugin);
 addRxPlugin(RxDBQueryBuilderPlugin);
 addRxPlugin(RxDBMigrationPlugin);
 addRxPlugin(RxDBUpdatePlugin);
@@ -111,9 +111,9 @@ export class RxDB {
           5: function (oldDoc: TabDocument) {
             return oldDoc;
           },
-          6: function (oldDoc: TabDocument) {
-            return oldDoc;
-          },
+          // 6: function (oldDoc: TabDocument) {
+          //   return oldDoc;
+          // },
         },
       },
       tab: {
@@ -142,6 +142,9 @@ export class RxDB {
       },
       team: {
         schema: teamSchema,
+        1: function (oldDoc: TabDocument) {
+          return oldDoc;
+        },
       },
       environment: {
         schema: environmentSchema,

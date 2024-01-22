@@ -70,7 +70,7 @@ export class WorkspaceService {
   ) => {
     const response = await makeRequest(
       "POST",
-      `${"http://localhost:9000"}/api/workspace/${workspaceId}/user`,
+      `${apiUrl}/api/workspace/${workspaceId}/user`,
       {
         body: addUsersInWorkspaceDto,
         headers: getAuthHeaders(),
