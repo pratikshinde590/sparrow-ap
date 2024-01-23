@@ -37,14 +37,31 @@ jobs:
           yarn install
           yarn tauri build --debug
           # Additional deployment steps if needed
-      - name: Create GitHub release
-        id: create-new-release
+          
+      # - name: Create GitHub release
+      #   id: create-new-release
+      #   uses: actions/create-release@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+      #   with:
+      #     tag_name: ${{ github.run_number }}
+      #     release_name: Release ${{ github.run_number }}
+
+      - name: Create Release
+        id: create_release
         uses: actions/create-release@v1
         env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          tag_name: ${{ github.run_number }}
-          release_name: Release ${{ github.run_number }}
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          body: |
+            Changes in this Release
+            - First Change
+            - Second Change
+          draft: false
+          prerelease: false
+          
       - name: Upload Release Asset for msi
         uses: actions/upload-release-asset@v1
         env:
