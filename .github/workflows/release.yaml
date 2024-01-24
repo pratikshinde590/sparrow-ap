@@ -2,8 +2,8 @@ name: Release
 
 on:
   push:
-    tags:
-      - 'v*' 
+    # tags:
+    #   - 'v*'
     branches:
       - development
 
@@ -37,14 +37,12 @@ jobs:
           yarn tauri build --debug
           # Additional deployment steps if needed
 
-      - name: Increment Version
-        id: increment-version
+      - name: Set Version
+        id: set-version
         run: |
-         $newVersion = "v0.0.$($env:GITHUB_RUN_NUMBER - 1)"
-         Write-Host "New version: $newVersion"
-         echo "##vso[task.setvariable variable=version]$newVersion"
+          echo "VERSION=v0.0.$((GITHUB_RUN_NUMBER - 1))" >> $GITHUB_ENV
+          echo "New version: $VERSION"
         shell: pwsh
-
 
       - name: Create GitHub release
         id: create-new-release
@@ -52,8 +50,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
-          tag_name: ${{ steps.increment-version.outputs.version }}
-          release_name: ${{ steps.increment-version.outputs.version }}
+          tag_name: ${{ env.VERSION }}
+          release_name: ${{ env.VERSION }}
 
       - name: Upload Release Asset for msi
         uses: actions/upload-release-asset@v1
