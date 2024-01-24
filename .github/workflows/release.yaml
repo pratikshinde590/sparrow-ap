@@ -40,9 +40,11 @@ jobs:
       - name: Set Version
         id: set-version
         run: |
-          echo "VERSION=v0.0.$((GITHUB_RUN_NUMBER - 1))" >> $GITHUB_ENV
-          echo "New version: $VERSION"
+          $newVersion = "v0.0.$($env:GITHUB_RUN_NUMBER - 1)"
+          Write-Host "VERSION=$newVersion" | Out-File $env:GITHUB_ENV -Encoding utf8
+          Write-Host "New version: $newVersion"
         shell: pwsh
+
 
       - name: Create GitHub release
         id: create-new-release
