@@ -37,13 +37,13 @@ jobs:
           yarn tauri build --debug
           # Additional deployment steps if needed
 
-      - name: Set Version
-        id: set-version
-        run: |
-          $newVersion = "v0.0.$($env:GITHUB_RUN_NUMBER - 1)"
-          Write-Host "VERSION=$newVersion" | Out-File $env:GITHUB_ENV -Encoding utf8
-          Write-Host "New version: $newVersion"
-        shell: pwsh
+      # - name: Set Version
+      #   id: set-version
+      #   run: |
+      #     $newVersion = "v0.0.$($env:GITHUB_RUN_NUMBER - 1)"
+      #     Write-Host "VERSION=$newVersion" | Out-File $env:GITHUB_ENV -Encoding utf8
+      #     Write-Host "New version: $newVersion"
+      #   shell: pwsh
 
 
       - name: Create GitHub release
@@ -52,8 +52,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.VERSION }}
-          release_name: ${{ env.VERSION }}
+          tag_name: v${{ steps.increment-version.outputs.version }}
+          release_name: v${{ steps.increment-version.outputs.version }}
 
       - name: Upload Release Asset for msi
         uses: actions/upload-release-asset@v1
@@ -61,8 +61,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-new-release.outputs.upload_url }}
-          asset_path: "D:/a/sparrow-ap/sparrow-ap/src-tauri/target/debug/bundle/msi/Sparrow-app_0.0.0_x64_en-US.msi"
-          asset_name: Sparrow-app_0.0.0_x64_en-US.msi${{ github.run_number }}
+          asset_path: "D:/a/sparrow-ap/sparrow-ap/src-tauri/target/debug/bundle/msi/Sparrow-app_${{ steps.increment-version.outputs.version }}_x64_en-US.msi"
+          asset_name: Sparrow-app_${{ steps.increment-version.outputs.version }}_x64_en-US.msi
           asset_content_type: application/zip
 
       - name: Upload Release Asset for nsis
@@ -71,6 +71,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create-new-release.outputs.upload_url }}
-          asset_path: "D:/a/sparrow-ap/sparrow-ap/src-tauri/target/debug/bundle/nsis/sparrow-app_0.0.0_x64-setup.exe"
-          asset_name: sparrow-app_0.0.0_x64-setup.exe${{ github.run_number }}
+          asset_path: "D:/a/sparrow-ap/sparrow-ap/src-tauri/target/debug/bundle/nsis/sparrow-app_${{ steps.increment-version.outputs.version }}_x64-setup.exe"
+          asset_name: sparrow-app_${{ steps.increment-version.outputs.version }}_x64-setup.exe
           asset_content_type: application/zip
