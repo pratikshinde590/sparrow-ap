@@ -3,12 +3,13 @@ name: Release
 on:
   push:
     # tags:
-    #   - 'v*'
+    #   - 'v*' 
     branches:
       - development
 
 env:
   VITE_API_URL: ${{ secrets.VITE_API_URL }}
+
 
 jobs:
   deploy:
@@ -35,42 +36,48 @@ jobs:
         run: |
           yarn install
           yarn tauri build --debug
-          # Additional deployment steps if needed
+          
+          
+      # - name: Create GitHub release
+      #   id: create-new-release
+      #   uses: actions/create-release@v1
+      #   env:
+      #     GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+      #   with:
+      #     tag_name: ${{ github.run_number }}
+      #     release_name: Release ${{ github.run_number }}
 
-      # - name: Set Version
-      #   id: set-version
-      #   run: |
-      #     $newVersion = "v0.0.$($env:GITHUB_RUN_NUMBER - 1)"
-      #     Write-Host "VERSION=$newVersion" | Out-File $env:GITHUB_ENV -Encoding utf8
-      #     Write-Host "New version: $newVersion"
-      #   shell: pwsh
-
-
-      - name: Create GitHub release
-        id: create-new-release
+      - name: Create Release
+        id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
-          tag_name: v${{ steps.increment-version.outputs.version }}
-          release_name: v${{ steps.increment-version.outputs.version }}
-
+          tag_name: ${{ github.run_number }}
+          release_name: Release v1.0.0-beta
+          body: |
+            Changes in this Release
+            - First Change
+            - Second Change
+          draft: false
+          prerelease: false
+          
       - name: Upload Release Asset for msi
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create-new-release.outputs.upload_url }}
-          asset_path: "D:/a/sparrow-ap/sparrow-ap/src-tauri/target/debug/bundle/msi/Sparrow-app_${{ steps.increment-version.outputs.version }}_x64_en-US.msi"
-          asset_name: Sparrow-app_${{ steps.increment-version.outputs.version }}_x64_en-US.msi
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: "D:/a/sparrow-ap/sparrow-ap/src-tauri/target/debug/bundle/msi/Sparrow-app_0.0.0_x64_en-US.msi"
+          asset_name: Sparrow-app_0.0.0_x64_en-US.msi
           asset_content_type: application/zip
-
+      
       - name: Upload Release Asset for nsis
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
-          upload_url: ${{ steps.create-new-release.outputs.upload_url }}
-          asset_path: "D:/a/sparrow-ap/sparrow-ap/src-tauri/target/debug/bundle/nsis/sparrow-app_${{ steps.increment-version.outputs.version }}_x64-setup.exe"
-          asset_name: sparrow-app_${{ steps.increment-version.outputs.version }}_x64-setup.exe
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: "D:/a/sparrow-ap/sparrow-ap/src-tauri/target/debug/bundle/nsis/sparrow-app_0.0.0_x64-setup.exe"
+          asset_name: sparrow-app_0.0.0_x64-setup.exe
           asset_content_type: application/zip
