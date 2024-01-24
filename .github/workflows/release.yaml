@@ -68,8 +68,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: "D:/a/sparrow-ap/sparrow-ap/src-tauri/target/debug/bundle/msi/Sparrow-app_0.0.0_x64_en-US.msi"
-          asset_name: Sparrow-app_0.0.0_x64_en-US.msi
+          asset_path: "D:/a/sparrow-ap/sparrow-ap/src-tauri/target/debug/bundle/msi/*.msi"
+          asset_name: /*.msi
           asset_content_type: application/zip
       
       - name: Upload Release Asset for nsis
@@ -78,6 +78,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: "D:/a/sparrow-ap/sparrow-ap/src-tauri/target/debug/bundle/nsis/sparrow-app_0.0.0_x64-setup.exe"
-          asset_name: sparrow-app_0.0.0_x64-setup.exe
+          asset_path: "D:/a/sparrow-ap/sparrow-ap/src-tauri/target/debug/bundle/nsis/*.exe"
+          asset_name: /*.exe
           asset_content_type: application/zip
