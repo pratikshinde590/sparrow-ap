@@ -39,7 +39,12 @@ jobs:
 
       - name: Increment Version
         id: increment-version
-        run: echo "::set-output name=version::v0.0.$((GITHUB_RUN_NUMBER - 1))"
+        run: |
+         $newVersion = "v0.0.$($env:GITHUB_RUN_NUMBER - 1)"
+         Write-Host "New version: $newVersion"
+         echo "##vso[task.setvariable variable=version]$newVersion"
+        shell: pwsh
+
 
       - name: Create GitHub release
         id: create-new-release
