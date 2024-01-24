@@ -44,8 +44,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
         with:
-          tag_name: ${{ github.run_number }}
-          release_name: v0.0.0${{ github.run_number }}
+          tag_name: v0.0.${{ format(github.run_number, '00') }}
+          release_name: v0.0.${{ format(github.run_number, '00') }}
 
       # - name: Create Release
       #   id: create-new-release
