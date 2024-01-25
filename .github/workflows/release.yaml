@@ -1,85 +1,27 @@
-name: Release
+name: Semantic Release
 
 on:
   push:
-    # tags:
-    #   - 'v*' 
     branches:
       - development
 
-env:
-  VITE_API_URL: ${{ secrets.VITE_API_URL }}
-
-
 jobs:
-  deploy:
-    runs-on: windows-latest
+  release:
+    runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
 
-      - name: Set up Node.js
+      - name: Setup Node.js
         uses: actions/setup-node@v2
         with:
-          node-version: 18.x
+          node-version: '18.x'
 
-      - name: Install Windows SDK
-        run: Invoke-WebRequest -Uri https://aka.ms/winsdk/10/latest/SdkSetup.exe -OutFile $env:TEMP\SdkSetup.exe
-        shell: powershell
+      - name: Install dependencies
+        run: yarn install
 
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v1
-        with:
-          dotnet-version: 3.1
-
-      - name: Install dependencies and deploy
-        run: |
-          yarn install
-          yarn tauri build --debug
-          
-          
-      # - name: Create GitHub release
-      #   id: create-new-release
-      #   uses: actions/create-release@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-      #   with:
-      #     tag_name: ${{ github.run_number }}
-      #     release_name: Release ${{ github.run_number }}
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.run_number }}
-          release_name: Release v1.0.0-beta
-          body: |
-            Changes in this Release
-            - First Change
-            - Second Change
-          draft: false
-          prerelease: false
-          
-
-      - name: Upload Release Asset for msi
-        uses: softprops/action-gh-release@v1
-        with:
-         files: D:/a/sparrow-ap/sparrow-ap/src-tauri/target/debug/bundle/msi/*.msi
-         tag_name: ${{ github.run_number }}
-         #body_path: release_notes.txt
-         generate_release_notes: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-
-      
-      - name: Upload Release Asset for msi
-        uses: softprops/action-gh-release@v1
-        with:
-         files: D:/a/sparrow-ap/sparrow-ap/src-tauri/target/debug/bundle/nsis/*.exe
-         tag_name: ${{ github.run_number }}
-         #body_path: release_notes.txt
-         generate_release_notes: true
+      - name: Semantic Release
+        run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
