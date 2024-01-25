@@ -29,8 +29,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-            # yarn cache clean
-            # npm install -g pnpm
+            yarn cache clean
+            npm install -g pnpm
             # pnpm install
             yarn install
             yarn tauri build --debug
