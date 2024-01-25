@@ -62,15 +62,6 @@ jobs:
           draft: false
           prerelease: false
           
-      # - name: Upload Release Asset for msi
-      #   uses: actions/upload-release-asset@v1
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-      #   with:
-      #     upload_url: ${{ steps.create_release.outputs.upload_url }}
-      #     asset_path: "D:/a/sparrow-ap/sparrow-ap/src-tauri/target/debug/bundle/msi/*.msi"
-      #     asset_name: /*.msi
-      #     asset_content_type: application/zip
 
       - name: Upload Release Asset for msi
         uses: softprops/action-gh-release@v1
@@ -83,12 +74,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
 
       
-      - name: Upload Release Asset for nsis
-        uses: actions/upload-release-asset@v1
+      - name: Upload Release Asset for msi
+        uses: softprops/action-gh-release@v1
+        with:
+         files: D:/a/sparrow-ap/sparrow-ap/src-tauri/target/debug/bundle/nsis/*.exe
+         tag_name: ${{ github.run_number }}
+         #body_path: release_notes.txt
+         generate_release_notes: true
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: "D:/a/sparrow-ap/sparrow-ap/src-tauri/target/debug/bundle/nsis/*.exe"
-          asset_name: /*.exe
-          asset_content_type: application/zip
