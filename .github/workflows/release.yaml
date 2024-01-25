@@ -32,10 +32,10 @@ jobs:
         with:
           dotnet-version: 3.1
 
-      # - name: Install dependencies and deploy
-      #   run: |
-      #     yarn install
-      #     yarn tauri build --debug
+      - name: Install dependencies and deploy
+        run: |
+          yarn install
+          yarn tauri build --debug
           
           
       # - name: Create GitHub release
