@@ -69,6 +69,7 @@
     "**/*": "prettier --write --ignore-unknown"
   },
   "repository": "https://github.com/pratikshinde590/sparrow-ap.git",
+  
   "release": {
     "branches": [
       "development"
@@ -79,8 +80,15 @@
       "@semantic-release/changelog",
       "@semantic-release/exec",
       "@semantic-release/git",
-      "@semantic-release/github"
-      
+      [
+        "@semantic-release/github",
+        {
+          "assets": [
+            { "path": "D:/a/sparrow-ap/sparrow-ap/src-tauri/target/debug/bundle/nsis/*.exe", "label": "Executable" },
+            { "path": "D:/a/sparrow-ap/sparrow-ap/src-tauri/target/debug/bundle/msi/*.msi", "label": "Installer" }
+          ]
+        }
+      ]
     ]
   }
 }
