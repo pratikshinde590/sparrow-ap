@@ -47,11 +47,4 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
 
-      # - name: Create GitHub Release
-      #   uses: actions/create-release@v1
-      #   with:
-      #     tag_name: v${{ github.ref }}
-      #     release_name: ${{ github.ref }}
-      #     body: "Release notes for ${{ github.ref }}"
-      #   env:
-      #     GITHUB_TOKEN: ${{ secrets.MY_GITHUB_TOKEN }}
+
