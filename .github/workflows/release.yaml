@@ -43,8 +43,9 @@ jobs:
       - name: Extract Version from Semantic Release
         id: extract-version
         run: |
-          version=$(grep -oP 'Published file .+sparrow-app_\K\d+\.\d+\.\d+' <<< "${{ steps.semantic-release.outputs.stdout }}")
-          echo "::set-output name=version::${version}"
+            $version = Select-String -Pattern 'Published file .+sparrow-app_(\d+\.\d+\.\d+)' -InputObject "${{ steps.semantic-release.outputs.stdout }}" | ForEach-Object { $_.Matches.Groups[1].Value }
+            echo "::set-output name=version::$version"
+        
 
       - name: Rename .exe file with version
         run: mv D:/a/sparrow-ap/sparrow-ap/src-tauri/target/debug/bundle/nsis/sparrow-app_0.0.0_x64-setup.exe "D:/a/sparrow-ap/sparrow-ap/src-tauri/target/debug/bundle/nsis/sparrow-app_${{ steps.extract-version.outputs.version }}_x64-setup.exe"
