@@ -1,3 +1,12 @@
+# [0.8.0](https://github.com/pratikshinde590/sparrow-ap/compare/v0.7.0...v0.8.0) (2024-01-29)
+
+
+### Features
+
+* update[9] ([8abdfd1](https://github.com/pratikshinde590/sparrow-ap/commit/8abdfd123ff866d20dcefb1b10b23220ba6f3230))
+* update[9] ([13512fc](https://github.com/pratikshinde590/sparrow-ap/commit/13512fc016b8c9ef4126bcfbeb4b9754c30310c1))
+* update[9] ([1430859](https://github.com/pratikshinde590/sparrow-ap/commit/1430859ee307c5e9a85e1e6ca6f61f30fb2da7ee))
+
 # [0.7.0](https://github.com/pratikshinde590/sparrow-ap/compare/v0.6.0...v0.7.0) (2024-01-25)
 
 
