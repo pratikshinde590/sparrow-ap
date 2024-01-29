@@ -35,6 +35,13 @@ jobs:
             yarn install
             yarn tauri build --debug
 
+      - name: Fetch Version from package.json
+        id: fetch-version
+        run: echo "::set-output name=version::$(jq -r .version package.json)"
+            
+      - name: Rename .exe file with version
+        run: mv D:/a/sparrow-ap/sparrow-ap/src-tauri/target/debug/bundle/nsis/sparrow-app_0.0.0_x64-setup.exe "D:/a/sparrow-ap/sparrow-ap/src-tauri/target/debug/bundle/nsis/sparrow-app_${{ steps.fetch-version.outputs.version }}_x64-setup.exe"
+
       - name: Semantic Release
         run: npx semantic-release
         env:
